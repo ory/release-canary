@@ -3,15 +3,14 @@ var path = require('path')
 
 var packageInfo = require(path.join(__dirname, '..', 'package.json'))
 var version = packageInfo.version
-var root = 'https://github.com/ory/cli/releases/download/v' + version
+var root = 'https://github.com/ory/release-canary/releases/download/v' + version
 
 module.exports = binwrap({
   dirname: __dirname,
-  binaries: ['ory'],
+  binaries: ['release-canary'],
   urls: {
-    'linux-x64': root + '/ory_' + version + '-linux_64bit.tar.gz',
-    'win32-x64': root + '/ory_' + version + '-windows_64bit.zip',
-    'darwin-x64': root + '/ory_' + version + '-macOS_64bit.tar.gz',
-    'darwin-arm64': root + '/ory_' + version + '-macOS_arm64.tar.gz'
+    'linux-x64': root + '/release-canary_' + version + '_linux_amd64.tar.gz',
+    'darwin-x64': root + '/release-canary_' + version + '_darwin_amd64.tar.gz',
+    'darwin-arm64': root + '/release-canary_' + version + '_darwin_arm64.tar.gz'
   }
 })
