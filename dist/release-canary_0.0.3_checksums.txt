@@ -1,5 +1,0 @@
-48410b035be1cedce333790aa4f2409e63c14feba7e79d692cfc7987736807f2  release-canary_0.0.3_linux_amd64.tar.gz
-b1a173ef0aa0611cf18ba44eb9b4a19c8887b018f9ad7865e939d2b63b8ea411  release-canary_0.0.3_linux_arm64.tar.gz
-c442caabed59e83510e6f2d9bd0c0a42908d3c0f28f6c94b0aef401107942757  release-canary_0.0.3_linux_386.tar.gz
-cd8534986b88ae3933d1208f1738592fedcc8efe0c1a2ace5d42276d360d24d4  release-canary_0.0.3_darwin_arm64.tar.gz
-e905f9b0feb72be19d5910cdb81a4596c835fe3f08938f806e459a9bec3bb93c  release-canary_0.0.3_darwin_amd64.tar.gz

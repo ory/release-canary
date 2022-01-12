@@ -1,0 +1,5 @@
+089eecd0f226176c6a26bc8023f423e972e974d1eaede5792449f92d41053871  release-canary_0.0.4_linux_arm64.tar.gz
+5e9a41d07c7592177d832b4bb0ad8076ce0b8faf6604368b11971f46bda79b94  release-canary_0.0.4_linux_amd64.tar.gz
+6a7d7e0dc842978cb872ef254fad7cb7fbd3729903240a8ebf3d7cc62112bf93  release-canary_0.0.4_linux_386.tar.gz
+b4f190e86ef0eff886950029ebcc53168a30625781a351a62e2584a58276797e  release-canary_0.0.4_darwin_amd64.tar.gz
+c16c3638edff382bcea5f4de1427d8333a42e72abb166982249175b5788a9d75  release-canary_0.0.4_darwin_arm64.tar.gz
