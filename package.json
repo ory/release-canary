@@ -1,6 +1,6 @@
 {
   "version": "0.0.7",
-  "name": "@ory/release-canary",
+  "name": "@icyorg/release-canary",
   "prettier": "ory-prettier-styles",
   "config": {
     "prettierTarget": "{**/,}*{.js,.md,.ts}"
@@ -22,7 +22,7 @@
     "bin"
   ],
   "bin": {
-    "ory": "bin/release-canary"
+    "release-canary": "bin/release-canary"
   },
   "dependencies": {
     "binwrap": "^0.2.3"
