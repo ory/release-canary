@@ -53,7 +53,7 @@ jobs:
     needs:
       - test
     steps:
-      - uses: ory/ci/releaser@v1
+      - uses: ory/ci/releaser@master
         with:
           token: ${{ secrets.PAT }}
           goreleaser_key: ${{ secrets.GORELEASER_KEY }}
@@ -83,7 +83,7 @@ jobs:
     needs:
       - release
     steps:
-      - uses: ory/ci/newsletter@v1
+      - uses: ory/ci/newsletter@master
         with:
           mailchimp_list_id: 058a056618
           mailchmip_segment_id: 11398953
@@ -112,7 +112,7 @@ jobs:
     if: ${{ github.ref_type == 'tag' }}
     environment: production
     steps:
-      - uses: ory/ci/newsletter@v1
+      - uses: ory/ci/newsletter@master
         with:
           mailchimp_list_id: 058a056618
           mailchmip_segment_id: 11398953
