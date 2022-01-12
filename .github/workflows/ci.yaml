@@ -73,8 +73,8 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm install
-          npm run test:binwrap
           npm version --no-git-tag-version ${{ github.ref_name }}
+          npm run test:binwrap
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           npm publish --access public
 
