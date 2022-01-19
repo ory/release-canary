@@ -23,7 +23,7 @@ jobs:
   docs:
     name: Generate docs
     runs-on: ubuntu-latest
-    if: ${{ github.event.push.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -105,7 +105,28 @@ jobs:
     steps:
       - uses: slackapi/slack-github-action@v1.16.0
         with:
-          payload: "{\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Pending approval\"}}]}"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Pending approval for newsletter send (*${{ github.repository }}*)"
+                },
+              "accessory": {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "View workflow",
+                  "emoji": true
+                  },
+                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "action_id": "workflow_link"
+                }
+              }
+            ]
+          }
 
   newsletter-send:
     name: Send newsletter
