@@ -113,20 +113,20 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "Pending approval for newsletter send (*${{ github.repository }}*)"
-                },
-              "accessory": {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "View workflow",
-                  "emoji": true
                   },
-                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                "action_id": "workflow_link"
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View workflow",
+                      "emoji": true
+                    },
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                    "action_id": "workflow_link"
+                  }
                 }
-              }
-            ]
-          }
+              ]
+            }
 
   newsletter-send:
     name: Send newsletter
