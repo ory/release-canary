@@ -32,19 +32,23 @@ jobs:
       - run: |
           mkdir -p docs/docs
           make docs/cli
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "github-actions"
-          echo 'docsdir='"$(mktemp -d)" >> $GITHUB_ENV
+          echo 'docsdir='"./docs" >> $GITHUB_ENV
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.PAT }}
+          repository: ory/docs
           path: ${{ env.docsdir }}
-      - run: |
+          token: ${{ secrets.PAT }}
+      - env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
           cd "$docsdir"
           git add -A
           git commit -a -m "autogen(docs): regenerate ory/cli reference" --allow-empty
           git pull -ff
-          git push
+          # git push
+          echo "not actually git push'ing"
 
   release:
     name: Generate release
@@ -131,7 +135,7 @@ jobs:
   newsletter-send:
     name: Send newsletter
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - newsletter-draft
     if: ${{ github.ref_type == 'tag' }}
     environment: production
@@ -143,5 +147,3 @@ jobs:
           mailchimp_api_key: ${{ secrets.MAILCHIMP_API_KEY }}
           draft: 'false'
           ssh_key: ${{ secrets.SSH_KEY }}
-
-
