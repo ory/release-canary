@@ -11,4 +11,4 @@ variables:
   buildinfo_tag: "github.com/ory/release-canary/buildinfo.Version"
   buildinfo_date: "github.com/ory/release-canary/buildinfo.Time"
 
-project_name: ory
+project_name: release-canary
