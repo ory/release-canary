@@ -6,8 +6,8 @@ RUN addgroup -S ory; \
 
 RUN apk add -U --no-cache ca-certificates
 
-COPY ory /usr/bin/ory
+COPY release-canary /usr/bin/release-canary
 
-USER ory
+USER release-canary
 
-ENTRYPOINT ["ory"]
+ENTRYPOINT ["release-canary"]
