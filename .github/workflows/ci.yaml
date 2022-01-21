@@ -60,15 +60,13 @@ jobs:
     needs:
       - test
     steps:
-      - uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - uses: ory/ci/releaser@master
         with:
           token: ${{ secrets.PAT }}
           goreleaser_key: ${{ secrets.GORELEASER_KEY }}
           cosign_pwd: ${{ secrets.COSIGN_PWD }}
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_password : ${{ secrets.DOCKERHUB_PASSWORD }}
 
   npm-publish:
     name: Publish to npm
