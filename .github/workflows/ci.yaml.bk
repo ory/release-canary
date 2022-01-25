@@ -1,0 +1,155 @@
+name: CI Tasks for Ory CLI
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '*'
+  pull_request:
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17'
+      - run: |
+          make test
+
+  docs:
+    name: Generate docs
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: current-repo
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17'
+      - run: |
+          cd current-repo
+          mkdir -p docs/docs
+          make docs/cli
+          cp -rf docs ../docs
+          cd ..
+          echo 'docsdir='"./docs" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+        with:
+          repository: ory/docs
+          path: ${{ env.docsdir }}
+          token: ${{ secrets.PAT }}
+      - env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: |
+          git config --global user.email "60093411+ory-bot@users.noreply.github.com"
+          git config --global user.name "ory-bot"
+          cd "$docsdir"
+          git add -A
+          git commit -a -m "autogen(docs): regenerate ory/cli reference" --allow-empty
+          git pull -ff
+          echo "git push: but not actually"
+  release:
+    name: Generate release
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    needs:
+      - test
+    steps:
+      - uses: ory/ci/releaser@master
+        with:
+          token: ${{ secrets.PAT }}
+          goreleaser_key: ${{ secrets.GORELEASER_KEY }}
+          cosign_pwd: ${{ secrets.COSIGN_PWD }}
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_password : ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  npm-publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    needs:
+      - release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm install
+          npm version --no-git-tag-version ${{ github.ref_name }}
+          npm run test:binwrap
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm publish --access public
+
+  newsletter-draft:
+    name: Draft newsletter
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    needs:
+      - release
+    steps:
+      - uses: ory/ci/newsletter@master
+        with:
+          mailchimp_list_id: 058a056618
+          mailchmip_segment_id: 11398953
+          mailchimp_api_key: ${{ secrets.MAILCHIMP_API_KEY }}
+          draft: 'true'
+          ssh_key: ${{ secrets.SSH_KEY }}
+
+  slack-approval-notification:
+    name: Pending approval Slack notification
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    needs:
+      - newsletter-draft
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    steps:
+      - uses: slackapi/slack-github-action@v1.16.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Pending approval for newsletter send (*${{ github.repository }}*)"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View workflow",
+                      "emoji": true
+                    },
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                    "action_id": "workflow_link"
+                  }
+                }
+              ]
+            }
+
+  newsletter-send:
+    name: Send newsletter
+    runs-on: ubuntu-latest
+    needs:
+      - newsletter-draft
+    if: ${{ github.ref_type == 'tag' }}
+    environment: production
+    steps:
+      - uses: ory/ci/newsletter@master
+        with:
+          mailchimp_list_id: 058a056618
+          mailchmip_segment_id: 11398953
+          mailchimp_api_key: ${{ secrets.MAILCHIMP_API_KEY }}
+          draft: 'false'
+          ssh_key: ${{ secrets.SSH_KEY }}

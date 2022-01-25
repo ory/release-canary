@@ -1,4 +1,4 @@
-name: CI Tasks for Ory CLI
+name: CI Tasks for Ory Hydra
 on:
   push:
     branches:
@@ -10,83 +10,207 @@ on:
 
 jobs:
   test:
-    name: Run tests
+    name: Run tests and lints
     runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '^1.17'
+          go-version: ^1.13
+      - run: go list -json > go.list
+      - name: Run nancy
+        uses: sonatype-nexus-community/nancy-github-action@v1.0.2
+      - name: Run prettier
+        uses: ory/ci/prettier@master
+      - name: Run prettier (docs)
+        uses: ory/ci/prettier@master
+        with:
+          dir: docs
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        env:
+          GOGC: 100
+        with:
+          args: --timeout 10m0s --issues-exit-code=0
+          skip-go-installation: true
+          skip-pkg-cache: true
       - run: |
-          make test
+          make .bin/go-acc
+          .bin/go-acc -o coverage.out ./... -- -failfast -timeout=20m -tags sqlite
+      - run: |
+          bash <(curl -s https://codecov.io/bash)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  docs:
-    name: Generate docs
+  test-hsm:
+    name: Run HSM tests
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref_type == 'tag' }}
+    env:
+      HSM_ENABLED: true
+      HSM_LIBRARY: /usr/lib/softhsm/libsofthsm2.so
+      HSM_TOKEN_LABEL: hydra
+      HSM_PIN: 1234
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.17
+      - run: |
+          sudo apt install -y softhsm opensc
+          sudo rm -rf /var/lib/softhsm/tokens
+          sudo mkdir -p /var/lib/softhsm/tokens
+          sudo chmod -R a+rwx /var/lib/softhsm
+          sudo chmod a+rx /etc/softhsm
+          sudo chmod a+r /etc/softhsm/*
+          pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --slot 0 --init-token --so-pin 0000 --init-pin --pin 1234 --label hydra
+          go test -p 1 -v -failfast -short -timeout=20m -tags=sqlite,hsm ./...
+
+  test-e2e:
+    name: Run end-to-end tests
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: test
+        ports:
+          - 5432:5432
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test
+        ports:
+          - 3306:3306
+    env:
+      TEST_DATABASE_POSTGRESQL: postgres://test:test@localhost:5432/postgres?sslmode=disable
+      TEST_DATABASE_MYSQL: "mysql://root:test@(localhost:3306)/mysql?multiStatements=true&parseTime=true"
+      TEST_DATABASE_COCKROACHDB: cockroach://root@localhost:26257/defaultdb?sslmode=disable
+
+    steps:
+      - run: |
+          docker create --name cockroach -p 26257:26257 \
+            cockroachdb/cockroach:v20.2.5 start-single-node --insecure
+          docker start cockroach
+        name: Start CockroachDB
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+
+      - run: ./test/e2e/circle-ci.bash memory
+      - run: ./test/e2e/circle-ci.bash memory --jwt
+      - run: ./test/e2e/circle-ci.bash cockroach
+      - run: ./test/e2e/circle-ci.bash cockroach --jwt
+      - run: ./test/e2e/circle-ci.bash mysql
+      - run: ./test/e2e/circle-ci.bash mysql --jwt
+      - run: ./test/e2e/circle-ci.bash postgres
+      - run: ./test/e2e/circle-ci.bash postgres --jwt
+
+  docs-build:
+    runs-on: ubuntu-latest
+    name: Build and publish docs
+    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
+    needs:
+      - test
+    steps:
+      - uses: ory/ci/docs@master
+        with:
+          job: 'build'
+          swag-spec-location: spec/api.json
+
+  docs-cli:
+    runs-on: ubuntu-latest
+    name: Build CLI docs
+    needs:
+      - test
+    steps:
+      - uses: ory/ci/docs@master
+        with:
+          job: 'cli'
+
+  changelog:
+    name: Generate changelog
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
+    needs:
+      - test
+      - test-hsm
+      - test-e2e
+      - docs-build
     steps:
       - uses: actions/checkout@v2
         with:
-          path: current-repo
-      - uses: actions/setup-go@v2
+          fetch-depth: 0
+      - uses: ory/ci/changelog@master
+
+  sdk-generate:
+    name: Generate SDKs
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' || github.ref_name != 'master' }}
+    needs:
+      - test
+      - test-hsm
+      - test-e2e
+    steps:
+      - uses: ory/ci/sdk@master
         with:
-          go-version: '^1.17'
-      - run: |
-          cd current-repo
-          mkdir -p docs/docs
-          make docs/cli
-          cp -rf docs ../docs
-          cd ..
-          echo 'docsdir='"./docs" >> $GITHUB_ENV
-      - uses: actions/checkout@v2
+          job: 'generate'
+          app-name: Ory_Hydra
+          swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+          swag-spec-location: spec/api.json
+
+  sdk-release:
+    name: Release SDKs
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    needs:
+      - test
+      - test-hsm
+      - sdk-generate
+      - docs-build
+      - release
+    steps:
+      - uses: ory/ci/sdk@master
         with:
-          repository: ory/docs
-          path: ${{ env.docsdir }}
-          token: ${{ secrets.PAT }}
-      - env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: |
-          git config --global user.email "60093411+ory-bot@users.noreply.github.com"
-          git config --global user.name "ory-bot"
-          cd "$docsdir"
-          git add -A
-          git commit -a -m "autogen(docs): regenerate ory/cli reference" --allow-empty
-          git pull -ff
-          echo "git push: but not actually"
+          job: 'release'
+          app-name: Ory_Hydra
+          swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+          swag-spec-location: spec/api.json
+
   release:
     name: Generate release
     runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' }}
     needs:
       - test
+      - test-hsm
+      - test-e2e
+      - changelog
+      - docs-build
     steps:
       - uses: ory/ci/releaser@master
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.ORY_BOT_PAT }}
           goreleaser_key: ${{ secrets.GORELEASER_KEY }}
           cosign_pwd: ${{ secrets.COSIGN_PWD }}
           docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker_password : ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-  npm-publish:
-    name: Publish to npm
+  render-version-schema:
+    name: Render version schema
     runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' }}
     needs:
       - release
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: ory/ci/releaser@master
         with:
-          node-version: '16'
-      - env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          npm install
-          npm version --no-git-tag-version ${{ github.ref_name }}
-          npm run test:binwrap
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm publish --access public
+          schema-path: spec/config.json
 
   newsletter-draft:
     name: Draft newsletter
@@ -101,7 +225,7 @@ jobs:
           mailchmip_segment_id: 11398953
           mailchimp_api_key: ${{ secrets.MAILCHIMP_API_KEY }}
           draft: 'true'
-          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_key: ${{ secrets.ORY_BOT_SSH_KEY }}
 
   slack-approval-notification:
     name: Pending approval Slack notification
@@ -152,4 +276,4 @@ jobs:
           mailchmip_segment_id: 11398953
           mailchimp_api_key: ${{ secrets.MAILCHIMP_API_KEY }}
           draft: 'false'
-          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_key: ${{ secrets.ORY_BOT_SSH_KEY }}
