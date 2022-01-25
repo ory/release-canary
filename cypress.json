@@ -1,0 +1,21 @@
+{
+  "env": {
+    "public_url": "http://127.0.0.1:5004",
+    "admin_url": "http://127.0.0.1:5001",
+    "consent_url": "http://127.0.0.1:5002",
+    "client_url": "http://127.0.0.1:5003",
+    "public_port": "5004",
+    "client_port": "5003",
+    "jwt_enabled": false
+  },
+  "chromeWebSecurity": false,
+  "retries": {
+    "runMode": 3,
+    "openMode": 1
+  },
+  "timeouts": {
+    "defaultCommandTimeout": 10000,
+    "requestTimeout": 10000
+  },
+  "projectId": "jrwjzp"
+}

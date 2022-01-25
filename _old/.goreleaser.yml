@@ -1,0 +1,22 @@
+includes:
+  - from_url:
+      url: https://raw.githubusercontent.com/ory/xgoreleaser/master/build.tmpl.yml
+
+variables:
+  brew_name: release-canary
+
+  brew_description: "Ory Release Canary"
+
+  buildinfo_hash: "github.com/ory/release-canary/buildinfo.GitHash"
+  buildinfo_tag: "github.com/ory/release-canary/buildinfo.Version"
+  buildinfo_date: "github.com/ory/release-canary/buildinfo.Time"
+  dockerfile: ".docker/Dockerfile-alpine"
+
+project_name: release-canary
+
+after:
+  hooks:
+    - cmd: "bash <(curl -s https://raw.githubusercontent.com/ory/xgoreleaser/master/docs.sh)"
+      env:
+        - "TAG_VERSION={{ .Tag }}"
+        - "DOCS_VERSION={{ .Major }}.{{ .Minor }}"

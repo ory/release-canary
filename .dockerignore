@@ -1,0 +1,16 @@
+.idea
+.vagrant
+docs
+node_modules
+.circleci
+.docker-home
+.github
+scripts
+sdk/js
+sdk/php
+vendor
+dist
+.bin
+test/e2e
+test/mock-*
+cypress
