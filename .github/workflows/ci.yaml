@@ -166,13 +166,14 @@ jobs:
       - test-hsm
       - test-e2e
     steps:
-      - uses: ory/ci/sdk@master
-        with:
-          token: ${{ secrets.PAT }}
-          job: 'generate'
-          app-name: Ory_Hydra
-          swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
-          swag-spec-location: spec/api.json
+      - run: echo 'ok'
+      # - uses: ory/ci/sdk@master
+      #   with:
+      #     token: ${{ secrets.PAT }}
+      #     job: 'generate'
+      #     app-name: Ory_Hydra
+      #     swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+      #     swag-spec-location: spec/api.json
 
   sdk-release:
     name: Release SDKs
