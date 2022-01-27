@@ -69,10 +69,27 @@ jobs:
         #     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --slot 0 --init-token --so-pin 0000 --init-pin --pin 1234 --label hydra
         #     go test -p 1 -v -failfast -short -timeout=20m -tags=sqlite,hsm ./...
 
+  setup-e2e:
+    name: Setup end-to-end tests
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+      - run: go build -tags sqlite -o test/e2e/hydra .
+      - uses: actions/cache@v2
+        with:
+          path: ./test/e2e/hydra
+          key: ${{ runner.os }}-hydra
+
   test-e2e:
     name: Run end-to-end tests
     runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
+    needs:
+      - setup-e2e
     strategy:
       matrix:
         database: ['memory', 'postgres', 'mysql', 'cockroach']
@@ -96,7 +113,7 @@ jobs:
       TEST_DATABASE_POSTGRESQL: "postgres://test:test@localhost:5432/postgres?sslmode=disable"
       TEST_DATABASE_MYSQL: "mysql://root:test@(localhost:3306)/mysql?multiStatements=true&parseTime=true"
       TEST_DATABASE_COCKROACHDB: "cockroach://root@localhost:26257/defaultdb?sslmode=disable"
-
+      SKIP_HYDRA_BUILD: 1
     steps:
       - run: |
           docker create --name cockroach -p 26257:26257 \
@@ -107,7 +124,10 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: ^1.16
-
+      - uses: actions/cache@v2
+        with:
+          path: ./test/e2e/hydra
+          key: ${{ runner.os }}-hydra
       - run: ./test/e2e/circle-ci.bash ${{ matrix.database }} ${{ matrix.args }}
        # - run: |
         #     docker create --name cockroach -p 26257:26257 \
