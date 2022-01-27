@@ -121,10 +121,11 @@ jobs:
     needs:
       - test
     steps:
-      - uses: ory/ci/docs/build@master
-        with:
-          token: ${{ secrets.PAT }}
-          swag-spec-location: spec/api.json
+      - run: echo 'ok'
+      # - uses: ory/ci/docs/build@master
+      #   with:
+      #     token: ${{ secrets.PAT }}
+      #     swag-spec-location: spec/api.json
 
   docs-cli:
     runs-on: ubuntu-latest
@@ -132,9 +133,10 @@ jobs:
     needs:
       - test
     steps:
-      - uses: ory/ci/docs/cli@master
-        with:
-          token: ${{ secrets.PAT }}
+      - run: echo 'ok'
+        # - uses: ory/ci/docs/cli@master
+        #   with:
+        #     token: ${{ secrets.PAT }}
 
   changelog:
     name: Generate changelog
@@ -146,12 +148,13 @@ jobs:
       - test-e2e
       - docs-build
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: ory/ci/changelog@master
-        with:
-          token: ${{ secrets.PAT }}
+      - run: echo 'ok'
+        # - uses: actions/checkout@v2
+        #   with:
+        #     fetch-depth: 0
+        # - uses: ory/ci/changelog@master
+        #   with:
+        #     token: ${{ secrets.PAT }}
 
   sdk-generate:
     name: Generate SDKs
@@ -162,12 +165,13 @@ jobs:
       - test-hsm
       - test-e2e
     steps:
-      - uses: ory/ci/sdk/generate@master
-        with:
-          token: ${{ secrets.PAT }}
-          app-name: Ory_Hydra
-          swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
-          swag-spec-location: spec/api.json
+      - run: echo 'ok'
+        # - uses: ory/ci/sdk/generate@master
+        #   with:
+        #     token: ${{ secrets.PAT }}
+        #     app-name: Ory_Hydra
+        #     swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+        #     swag-spec-location: spec/api.json
 
   sdk-release:
     name: Release SDKs
@@ -198,13 +202,14 @@ jobs:
       - changelog
       - docs-build
     steps:
-      - uses: ory/ci/releaser@master
-        with:
-          token: ${{ secrets.PAT }}
-          goreleaser_key: ${{ secrets.GORELEASER_KEY }}
-          cosign_pwd: ${{ secrets.COSIGN_PWD }}
-          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - run: echo 'ok'
+      # - uses: ory/ci/releaser@master
+      #   with:
+      #     token: ${{ secrets.PAT }}
+      #     goreleaser_key: ${{ secrets.GORELEASER_KEY }}
+      #     cosign_pwd: ${{ secrets.COSIGN_PWD }}
+      #     docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   render-version-schema:
     name: Render version schema
