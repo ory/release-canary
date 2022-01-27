@@ -55,19 +55,19 @@ jobs:
       HSM_PIN: 1234
     steps:
       - run: echo 'ok'
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-go@v2
-      #   with:
-      #     go-version: ^1.17
-      # - run: |
-      #     sudo apt install -y softhsm opensc
-      #     sudo rm -rf /var/lib/softhsm/tokens
-      #     sudo mkdir -p /var/lib/softhsm/tokens
-      #     sudo chmod -R a+rwx /var/lib/softhsm
-      #     sudo chmod a+rx /etc/softhsm
-      #     sudo chmod a+r /etc/softhsm/*
-      #     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --slot 0 --init-token --so-pin 0000 --init-pin --pin 1234 --label hydra
-      #     go test -p 1 -v -failfast -short -timeout=20m -tags=sqlite,hsm ./...
+        # - uses: actions/checkout@v2
+        # - uses: actions/setup-go@v2
+        #   with:
+        #     go-version: ^1.17
+        # - run: |
+        #     sudo apt install -y softhsm opensc
+        #     sudo rm -rf /var/lib/softhsm/tokens
+        #     sudo mkdir -p /var/lib/softhsm/tokens
+        #     sudo chmod -R a+rwx /var/lib/softhsm
+        #     sudo chmod a+rx /etc/softhsm
+        #     sudo chmod a+r /etc/softhsm/*
+        #     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --slot 0 --init-token --so-pin 0000 --init-pin --pin 1234 --label hydra
+        #     go test -p 1 -v -failfast -short -timeout=20m -tags=sqlite,hsm ./...
 
   test-e2e:
     name: Run end-to-end tests
@@ -95,24 +95,24 @@ jobs:
 
     steps:
       - run: echo 'ok'
-      # - run: |
-      #     docker create --name cockroach -p 26257:26257 \
-      #       cockroachdb/cockroach:v20.2.5 start-single-node --insecure
-      #     docker start cockroach
-      #   name: Start CockroachDB
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-go@v2
-      #   with:
-      #     go-version: ^1.16
+        # - run: |
+        #     docker create --name cockroach -p 26257:26257 \
+        #       cockroachdb/cockroach:v20.2.5 start-single-node --insecure
+        #     docker start cockroach
+        #   name: Start CockroachDB
+        # - uses: actions/checkout@v2
+        # - uses: actions/setup-go@v2
+        #   with:
+        #     go-version: ^1.16
 
-      # - run: ./test/e2e/circle-ci.bash memory
-      # - run: ./test/e2e/circle-ci.bash memory --jwt
-      # - run: ./test/e2e/circle-ci.bash cockroach
-      # - run: ./test/e2e/circle-ci.bash cockroach --jwt
-      # - run: ./test/e2e/circle-ci.bash mysql
-      # - run: ./test/e2e/circle-ci.bash mysql --jwt
-      # - run: ./test/e2e/circle-ci.bash postgres
-      # - run: ./test/e2e/circle-ci.bash postgres --jwt
+        # - run: ./test/e2e/circle-ci.bash memory
+        # - run: ./test/e2e/circle-ci.bash memory --jwt
+        # - run: ./test/e2e/circle-ci.bash cockroach
+        # - run: ./test/e2e/circle-ci.bash cockroach --jwt
+        # - run: ./test/e2e/circle-ci.bash mysql
+        # - run: ./test/e2e/circle-ci.bash mysql --jwt
+        # - run: ./test/e2e/circle-ci.bash postgres
+        # - run: ./test/e2e/circle-ci.bash postgres --jwt
 
   docs-build:
     runs-on: ubuntu-latest
@@ -121,12 +121,10 @@ jobs:
     needs:
       - test
     steps:
-      - run: echo 'ok'
-        # - uses: ory/ci/docs@master
-        #   with:
-        #     token: ${{ secrets.PAT }}
-        #     job: 'build'
-        #     swag-spec-location: spec/api.json
+      - uses: ory/ci/docs/build@master
+        with:
+          token: ${{ secrets.PAT }}
+          swag-spec-location: spec/api.json
 
   docs-cli:
     runs-on: ubuntu-latest
@@ -134,11 +132,9 @@ jobs:
     needs:
       - test
     steps:
-      - run: echo 'ok'
-        # - uses: ory/ci/docs@master
-        #   with:
-        #     token: ${{ secrets.PAT }}
-        #     job: 'cli'
+      - uses: ory/ci/docs/cli@master
+        with:
+          token: ${{ secrets.PAT }}
 
   changelog:
     name: Generate changelog
@@ -166,14 +162,12 @@ jobs:
       - test-hsm
       - test-e2e
     steps:
-      - run: echo 'ok'
-      # - uses: ory/ci/sdk@master
-      #   with:
-      #     token: ${{ secrets.PAT }}
-      #     job: 'generate'
-      #     app-name: Ory_Hydra
-      #     swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
-      #     swag-spec-location: spec/api.json
+      - uses: ory/ci/sdk/generate@master
+        with:
+          token: ${{ secrets.PAT }}
+          app-name: Ory_Hydra
+          swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+          swag-spec-location: spec/api.json
 
   sdk-release:
     name: Release SDKs
@@ -186,10 +180,9 @@ jobs:
       - docs-build
       - release
     steps:
-      - uses: ory/ci/sdk@master
+      - uses: ory/ci/sdk/release@master
         with:
           token: ${{ secrets.PAT }}
-          job: 'release'
           app-name: Ory_Hydra
           swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
           swag-spec-location: spec/api.json
@@ -220,7 +213,7 @@ jobs:
     needs:
       - release
     steps:
-      - uses: ory/ci/releaser@master
+      - uses: ory/ci/releaser/render-version-schema@master
         with:
           schema-path: spec/config.json
 
