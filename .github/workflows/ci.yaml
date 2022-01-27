@@ -184,12 +184,13 @@ jobs:
       - docs-build
       - release
     steps:
-      - uses: ory/ci/sdk/release@master
-        with:
-          token: ${{ secrets.PAT }}
-          app-name: Ory_Hydra
-          swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
-          swag-spec-location: spec/api.json
+      - run: echo 'ok'
+      # - uses: ory/ci/sdk/release@master
+      #   with:
+      #     token: ${{ secrets.PAT }}
+      #     app-name: Ory_Hydra
+      #     swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+      #     swag-spec-location: spec/api.json
 
   release:
     name: Generate release
