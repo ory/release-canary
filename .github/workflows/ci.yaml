@@ -72,7 +72,7 @@ jobs:
   test-e2e:
     name: Run end-to-end tests
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' }}
+    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     strategy:
       matrix:
         database: ['memory', 'postgres', 'mysql', 'cockroach']
