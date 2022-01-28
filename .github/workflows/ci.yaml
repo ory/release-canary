@@ -72,23 +72,20 @@ jobs:
   setup-e2e:
     name: Setup end-to-end tests
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     steps:
-      - run: echo 'ok'
-      #   - uses: actions/checkout@v2
-      #   - uses: actions/setup-go@v2
-      #     with:
-      #       go-version: ^1.16
-      #   - run: go build -tags sqlite -o test/e2e/hydra .
-      #   - uses: actions/cache@v2
-      #     with:
-      #       path: ./test/e2e/hydra
-      #       key: ${{ runner.os }}-hydra
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+      - run: go build -tags sqlite -o test/e2e/hydra .
+      - uses: actions/cache@v2
+        with:
+          path: ./test/e2e/hydra
+          key: ${{ runner.os }}-hydra
 
   test-e2e:
     name: Run end-to-end tests
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     needs:
       - setup-e2e
     strategy:
@@ -116,39 +113,20 @@ jobs:
       TEST_DATABASE_COCKROACHDB: "cockroach://root@localhost:26257/defaultdb?sslmode=disable"
       SKIP_HYDRA_BUILD: 1
     steps:
-      - run: echo 'ok'
-      # - run: |
-      #     docker create --name cockroach -p 26257:26257 \
-      #       cockroachdb/cockroach:v20.2.5 start-single-node --insecure
-      #     docker start cockroach
-      #   name: Start CockroachDB
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-go@v2
-      #   with:
-      #     go-version: ^1.16
-      # - uses: actions/cache@v2
-      #   with:
-      #     path: ./test/e2e/hydra
-      #     key: ${{ runner.os }}-hydra
-      # - run: ./test/e2e/circle-ci.bash ${{ matrix.database }} ${{ matrix.args }}
-       # - run: |
-        #     docker create --name cockroach -p 26257:26257 \
-        #       cockroachdb/cockroach:v20.2.5 start-single-node --insecure
-        #     docker start cockroach
-        #   name: Start CockroachDB
-        # - uses: actions/checkout@v2
-        # - uses: actions/setup-go@v2
-        #   with:
-        #     go-version: ^1.16
-
-        # - run: ./test/e2e/circle-ci.bash memory
-        # - run: ./test/e2e/circle-ci.bash memory --jwt
-        # - run: ./test/e2e/circle-ci.bash cockroach
-        # - run: ./test/e2e/circle-ci.bash cockroach --jwt
-        # - run: ./test/e2e/circle-ci.bash mysql
-        # - run: ./test/e2e/circle-ci.bash mysql --jwt
-        # - run: ./test/e2e/circle-ci.bash postgres
-        # - run: ./test/e2e/circle-ci.bash postgres --jwt
+      - run: |
+          docker create --name cockroach -p 26257:26257 \
+            cockroachdb/cockroach:v20.2.5 start-single-node --insecure
+          docker start cockroach
+        name: Start CockroachDB
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+      - uses: actions/cache@v2
+        with:
+          path: ./test/e2e/hydra
+          key: ${{ runner.os }}-hydra
+      - run: ./test/e2e/circle-ci.bash ${{ matrix.database }} ${{ matrix.args }}
 
   docs-build:
     runs-on: ubuntu-latest
