@@ -74,15 +74,16 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: ^1.16
-      - run: go build -tags sqlite -o test/e2e/hydra .
-      - uses: actions/cache@v2
-        with:
-          path: ./test/e2e/hydra
-          key: ${{ runner.os }}-hydra
+      - run: echo 'ok'
+      #   - uses: actions/checkout@v2
+      #   - uses: actions/setup-go@v2
+      #     with:
+      #       go-version: ^1.16
+      #   - run: go build -tags sqlite -o test/e2e/hydra .
+      #   - uses: actions/cache@v2
+      #     with:
+      #       path: ./test/e2e/hydra
+      #       key: ${{ runner.os }}-hydra
 
   test-e2e:
     name: Run end-to-end tests
@@ -115,20 +116,21 @@ jobs:
       TEST_DATABASE_COCKROACHDB: "cockroach://root@localhost:26257/defaultdb?sslmode=disable"
       SKIP_HYDRA_BUILD: 1
     steps:
-      - run: |
-          docker create --name cockroach -p 26257:26257 \
-            cockroachdb/cockroach:v20.2.5 start-single-node --insecure
-          docker start cockroach
-        name: Start CockroachDB
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: ^1.16
-      - uses: actions/cache@v2
-        with:
-          path: ./test/e2e/hydra
-          key: ${{ runner.os }}-hydra
-      - run: ./test/e2e/circle-ci.bash ${{ matrix.database }} ${{ matrix.args }}
+      - run: echo 'ok'
+      # - run: |
+      #     docker create --name cockroach -p 26257:26257 \
+      #       cockroachdb/cockroach:v20.2.5 start-single-node --insecure
+      #     docker start cockroach
+      #   name: Start CockroachDB
+      # - uses: actions/checkout@v2
+      # - uses: actions/setup-go@v2
+      #   with:
+      #     go-version: ^1.16
+      # - uses: actions/cache@v2
+      #   with:
+      #     path: ./test/e2e/hydra
+      #     key: ${{ runner.os }}-hydra
+      # - run: ./test/e2e/circle-ci.bash ${{ matrix.database }} ${{ matrix.args }}
        # - run: |
         #     docker create --name cockroach -p 26257:26257 \
         #       cockroachdb/cockroach:v20.2.5 start-single-node --insecure
@@ -253,9 +255,10 @@ jobs:
     needs:
       - release
     steps:
-      - uses: ory/ci/releaser/render-version-schema@master
-        with:
-          schema-path: spec/config.json
+      - run: echo 'ok'
+      # - uses: ory/ci/releaser/render-version-schema@master
+      #   with:
+      #     schema-path: spec/config.json
 
   newsletter-draft:
     name: Draft newsletter
@@ -272,40 +275,15 @@ jobs:
           draft: 'true'
           ssh_key: ${{ secrets.SSH_KEY }}
 
+
   slack-approval-notification:
     name: Pending approval Slack notification
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' }}
-    needs:
-      - newsletter-draft
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     steps:
-      - uses: slackapi/slack-github-action@v1.16.0
+      - uses: ory/ci/newsletter/slack-notify@master
         with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Pending approval for newsletter send (*${{ github.repository }}*)"
-                  },
-                  "accessory": {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "View workflow",
-                      "emoji": true
-                    },
-                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                    "action_id": "workflow_link"
-                  }
-                }
-              ]
-            }
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   newsletter-send:
     name: Send newsletter
