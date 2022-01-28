@@ -257,7 +257,7 @@ jobs:
   slack-approval-notification:
     name: Pending approval Slack notification
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
+    if: ${{ github.ref_type == 'tag' }}
     steps:
       - uses: ory/ci/newsletter/slack-notify@master
         with:
