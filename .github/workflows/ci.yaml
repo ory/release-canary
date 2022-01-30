@@ -351,8 +351,9 @@ jobs:
             -O $GOPATH/bin/yq
           chmod +x $GOPATH/bin/yq
       - run: |
-          yq build.tmpl.yml -o=json 'builds' | jq -c '.[].id' | jq -s '{id: .}' -c
-            # echo "::set-output name=matrix::$(yq build.tmpl.yml -o=json 'builds' | jq -c '.[].id' | jq -s '{id: .}' -c)"
+          json="$(cat build.tmpl.yml | yq -o=json '.builds' | jq -c '.[].id' | jq -s '{id : .}' -c)"
+          echo ${{ fromJSON("$json") }}
+          echo "::set-output name=matrix::$(cat build.tmpl.yml | yq -o=json '.builds' | jq -c '.[].id' | jq -s '{id : .}' -c)"
 
   release:
     name: Generate release
