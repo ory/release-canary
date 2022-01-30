@@ -43,6 +43,34 @@ jobs:
   #     #     bash <(curl -s https://codecov.io/bash)
   #     #   env:
   #     #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-go@v2
+  #       with:
+  #         go-version: ^1.13
+  #     - run: go list -json > go.list
+  #     - name: Run nancy
+  #       uses: sonatype-nexus-community/nancy-github-action@v1.0.2
+  #     - name: Run prettier
+  #       uses: ory/ci/prettier@master
+  #     - name: Run prettier (docs)
+  #       uses: ory/ci/prettier@master
+  #       with:
+  #         dir: docs
+  #     - name: Run golangci-lint
+  #       uses: golangci/golangci-lint-action@v2
+  #       env:
+  #         GOGC: 100
+  #       with:
+  #         args: --timeout 10m0s --issues-exit-code=0
+  #         skip-go-installation: true
+  #         skip-pkg-cache: true
+  #     - run: |
+  #         make .bin/go-acc
+  #         .bin/go-acc -o coverage.out ./... -- -failfast -timeout=20m -tags sqlite
+  #     - run: |
+  #         bash <(curl -s https://codecov.io/bash)
+  #       env:
+  #         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   # test-hsm:
   #   name: Run HSM tests
@@ -112,6 +140,44 @@ jobs:
   #     TEST_DATABASE_MYSQL: "mysql://root:test@(localhost:3306)/mysql?multiStatements=true&parseTime=true"
   #     TEST_DATABASE_COCKROACHDB: "cockroach://root@localhost:26257/defaultdb?sslmode=disable"
   #     SKIP_HYDRA_BUILD: 1
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-go@v2
+  #       with:
+  #         go-version: ^1.17
+  #     - run: |
+  #         sudo apt install -y softhsm opensc
+  #         sudo rm -rf /var/lib/softhsm/tokens
+  #         sudo mkdir -p /var/lib/softhsm/tokens
+  #         sudo chmod -R a+rwx /var/lib/softhsm
+  #         sudo chmod a+rx /etc/softhsm
+  #         sudo chmod a+r /etc/softhsm/*
+  #         pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --slot 0 --init-token --so-pin 0000 --init-pin --pin 1234 --label hydra
+  #         go test -p 1 -v -failfast -short -timeout=20m -tags=sqlite,hsm ./...
+
+  # test-e2e:
+  #   name: Run end-to-end tests
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.ref_type == 'tag' }}
+  #   services:
+  #     postgres:
+  #       image: postgres:9.6
+  #       env:
+  #         POSTGRES_DB: postgres
+  #         POSTGRES_PASSWORD: test
+  #         POSTGRES_USER: test
+  #       ports:
+  #         - 5432:5432
+  #     mysql:
+  #       image: mysql:8.0
+  #       env:
+  #         MYSQL_ROOT_PASSWORD: test
+  #       ports:
+  #         - 3306:3306
+  #   env:
+  #     TEST_DATABASE_POSTGRESQL: postgres://test:test@localhost:5432/postgres?sslmode=disable
+  #     TEST_DATABASE_MYSQL: "mysql://root:test@(localhost:3306)/mysql?multiStatements=true&parseTime=true"
+  #     TEST_DATABASE_COCKROACHDB: cockroach://root@localhost:26257/defaultdb?sslmode=disable
+
   #   steps:
   #     - run: |
   #         docker create --name cockroach -p 26257:26257 \
@@ -174,6 +240,42 @@ jobs:
   #   name: Generate SDKs
   #   runs-on: ubuntu-latest
   #   if: ${{ github.ref_type == 'tag' || github.ref_name != 'master' }}
+
+  #     - run: ./test/e2e/circle-ci.bash memory
+  #     - run: ./test/e2e/circle-ci.bash memory --jwt
+  #     - run: ./test/e2e/circle-ci.bash cockroach
+  #     - run: ./test/e2e/circle-ci.bash cockroach --jwt
+  #     - run: ./test/e2e/circle-ci.bash mysql
+  #     - run: ./test/e2e/circle-ci.bash mysql --jwt
+  #     - run: ./test/e2e/circle-ci.bash postgres
+  #     - run: ./test/e2e/circle-ci.bash postgres --jwt
+
+  # docs-build:
+  #   runs-on: ubuntu-latest
+  #   name: Build and publish docs
+  #   if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
+  #   needs:
+  #     - test
+  #   steps:
+  #     - uses: ory/ci/docs@master
+  #       with:
+  #         job: 'build'
+  #         swag-spec-location: spec/api.json
+
+  # docs-cli:
+  #   runs-on: ubuntu-latest
+  #   name: Build CLI docs
+  #   needs:
+  #     - test
+  #   steps:
+  #     - uses: ory/ci/docs@master
+  #       with:
+  #         job: 'cli'
+
+  # changelog:
+  #   name: Generate changelog
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
   #   needs:
   #     - test
   #     - test-hsm
@@ -186,6 +288,29 @@ jobs:
   #       #     app-name: Ory_Hydra
   #       #     swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
   #       #     swag-spec-location: spec/api.json
+
+  #     - docs-build
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: ory/ci/changelog@master
+
+  # sdk-generate:
+  #   name: Generate SDKs
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.ref_type == 'tag' || github.ref_name != 'master' }}
+  #   needs:
+  #     - test
+  #     - test-hsm
+  #     - test-e2e
+  #   steps:
+  #     - uses: ory/ci/sdk@master
+  #       with:
+  #         job: 'generate'
+  #         app-name: Ory_Hydra
+  #         swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+  #         swag-spec-location: spec/api.json
 
   # sdk-release:
   #   name: Release SDKs
@@ -205,18 +330,50 @@ jobs:
   #     #     app-name: Ory_Hydra
   #     #     swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
   #     #     swag-spec-location: spec/api.json
+  #     - uses: ory/ci/sdk@master
+  #       with:
+  #         job: 'release'
+  #         app-name: Ory_Hydra
+  #         swag-spec-ignore: internal/httpclient gopkg.in/square/go-jose.v2
+  #         swag-spec-location: spec/api.json
+
+  prep-release:
+    name: Prepare release job matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17'
+      - run: echo 'GOPATH='"$(go env GOPATH)" >> $GITHUB_ENV
+      - run: |
+          wget https://github.com/mikefarah/yq/releases/download/v4.18.1/yq_linux_amd64 \
+            -O $GOPATH/bin/yq
+          chmod +x $GOPATH/bin/yq
+      - run: |
+          echo "::set-output name=matrix::$(yq r build.tmpl.yml -j 'builds' | jq -c '.[].id' | jq -s '{id: .}' -c)"
 
   release:
     name: Generate release
     runs-on: ubuntu-latest
-      # needs:
+    needs:
+      - prep-release
       # - test
       # - test-hsm
       # - test-e2e
       # - changelog
       # - docs-build
+    strategy:
+      matrix: ${{ fromJSON(needs.prep-release.outputs.matrix) }}
     steps:
-      - uses: ory/ci/releaser@master
+      - uses: icyphox/gha/releaser/build@master
+        with:
+          token: ${{ secrets.PAT }}
+          goreleaser_key: ${{ secrets.GORELEASER_KEY }}
+          cosign_pwd: ${{ secrets.COSIGN_PWD }}
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          build-id: ${{ matrix.id }}
+      - uses: icyphox/gha/releaser@master
         with:
           token: ${{ secrets.PAT }}
           goreleaser_key: ${{ secrets.GORELEASER_KEY }}
