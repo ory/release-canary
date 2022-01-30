@@ -340,6 +340,8 @@ jobs:
   prep-release:
     name: Prepare release job matrix
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -351,9 +353,8 @@ jobs:
             -O $GOPATH/bin/yq
           chmod +x $GOPATH/bin/yq
       - run: |
-          json="$(cat build.tmpl.yml | yq -o=json '.builds' | jq -c '.[].id' | jq -s '{id : .} | @json')"
-          echo "$json"
-          echo "::set-output name=matrix::$json"
+          echo "::set-output name=matrix::$(cat build.tmpl.yml | yq -o=json '.builds' | jq -c '.[].id' | jq -cs '{id : .}')"
+        id: set-matrix
 
   release:
     name: Generate release
@@ -366,7 +367,7 @@ jobs:
       # - changelog
       # - docs-build
     strategy:
-      matrix: ${{ fromJSON(needs.prep-release.outputs.matrix) }}
+      matrix: ${{fromJSON(needs.prep-release.outputs.matrix)}}
     steps:
       - uses: icyphox/gha/releaser/build@master
         with:
