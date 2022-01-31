@@ -1,6 +1,6 @@
 includes:
   - from_file:
-      path: .goreleaser/release.tmpl.yml
+      path: .goreleaser/build.tmpl.yml
 
 variables:
   # brew_name: release-canary

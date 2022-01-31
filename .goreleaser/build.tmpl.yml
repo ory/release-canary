@@ -67,9 +67,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: linux-cgo-amd64
     flags:
       - '-tags=sqlite,hsm,json1'
@@ -94,9 +91,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: linux-cgo-arm64
     flags:
       - '-tags=sqlite,hsm,json1'
@@ -122,9 +116,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: linux-cgo-arm
     flags:
       - '-tags=sqlite,hsm,json1'
@@ -153,9 +144,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: alpine-cgo-amd64
     flags:
       - '-tags=sqlite,hsm,json1'
@@ -181,9 +169,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: alpine-cgo-arm64
     flags:
       - '-tags'
@@ -210,9 +195,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: alpine-cgo-arm
     flags:
       - '-tags'
@@ -242,9 +224,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: windows-cgo
     flags:
       - '-tags=sqlite,hsm,json1'
@@ -271,9 +250,6 @@ builds:
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target
             }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   - id: default
     ldflags:
       - >-
@@ -303,9 +279,6 @@ builds:
             bash <(curl
             https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh)
             "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
-    builder: prebuilt
-    prebuilt:
-      path: 'output/{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
 archives:
   - id: windows-cgo
     builds:
@@ -411,10 +384,8 @@ release:
   name_template: '{{ .Tag }}'
   footer: >
     {{ with .pub_key }}
-
     Artifacts can be verified with [cosign](https://github.com/sigstore/cosign)
     using [this public key]({{ . }}).
-
     {{ end }}
   extra_files:
     - glob: ./dist/*.bom.json
