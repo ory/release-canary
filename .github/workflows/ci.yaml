@@ -353,7 +353,7 @@ jobs:
             -O $GOPATH/bin/yq
           chmod +x $GOPATH/bin/yq
       - run: |
-          echo "::set-output name=matrix::$(cat build.tmpl.yml | yq -o=json '.builds' | jq -c '.[].id' | jq -cs '{id : .}')"
+          echo "::set-output name=matrix::$(cat .goreleaser/build.tmpl.yml | yq -o=json '.builds' | jq -c '.[].id' | jq -cs '{id : .}')"
         id: set-matrix
 
   release-build:
