@@ -377,26 +377,20 @@ jobs:
           docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
           docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
           build-id: ${{ matrix.id }}
-            #       - uses: icyphox/gha/releaser@master
-            #         with:
-            #           token: ${{ secrets.PAT }}
-            #           goreleaser_key: ${{ secrets.GORELEASER_KEY }}
-            #           cosign_pwd: ${{ secrets.COSIGN_PWD }}
-            #           docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
-            #           docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-    release:
-      name: Generate release
-      runs-on: ubuntu-latest
-      needs:
-        - release-build
-      steps:
-        - uses: icyphox/gha/releaser@master
-          with:
-            token: ${{ secrets.PAT }}
-            goreleaser_key: ${{ secrets.GORELEASER_KEY }}
-            cosign_pwd: ${{ secrets.COSIGN_PWD }}
-            docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
-            docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  release:
+    name: Generate release
+    runs-on: ubuntu-latest
+    needs:
+      - release-build
+    steps:
+      - uses: icyphox/gha/releaser@master
+        with:
+          token: ${{ secrets.PAT }}
+          goreleaser_key: ${{ secrets.GORELEASER_KEY }}
+          cosign_pwd: ${{ secrets.COSIGN_PWD }}
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 
   # render-version-schema:
