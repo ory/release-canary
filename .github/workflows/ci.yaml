@@ -225,7 +225,7 @@ jobs:
     steps:
       - uses: icyphox/gha/changelog@master
         with:
-          token: ${{ secrets.ORY_BOT_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
             #   sdk-release:
             #     name: Release SDKs
