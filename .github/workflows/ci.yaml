@@ -223,7 +223,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     steps:
-      - run: git tag -l --format='%(contents)'
       - uses: icyphox/gha/changelog@master
         with:
           token: ${{ secrets.ORY_BOT_PAT }}
