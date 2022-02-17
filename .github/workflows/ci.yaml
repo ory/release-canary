@@ -224,7 +224,7 @@ jobs:
     if: ${{ github.ref_type == 'tag' || github.ref_name == 'master' }}
     steps:
       - run: git tag -l --format='%(contents)'
-      - uses: ory/ci/changelog@master
+      - uses: icyphox/gha/changelog@master
         with:
           token: ${{ secrets.ORY_BOT_PAT }}
 
