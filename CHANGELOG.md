@@ -4,45 +4,66 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [0.0.0 (2022-01-27)](#000-2022-01-27)
-- [0.0.34 (2022-01-27)](#0034-2022-01-27)
+- [0.0.0 (2022-02-17)](#000-2022-02-17)
     - [Unclassified](#unclassified)
-- [0.0.33 (2022-01-26)](#0033-2022-01-26)
+- [0.1.6 (2022-02-17)](#016-2022-02-17)
     - [Unclassified](#unclassified-1)
-- [0.0.32 (2022-01-26)](#0032-2022-01-26)
+- [0.1.5 (2022-02-17)](#015-2022-02-17)
     - [Unclassified](#unclassified-2)
-- [0.0.31 (2022-01-26)](#0031-2022-01-26)
+- [0.1.4 (2022-02-17)](#014-2022-02-17)
     - [Unclassified](#unclassified-3)
-- [0.0.30 (2022-01-25)](#0030-2022-01-25)
+- [0.1.3 (2022-02-17)](#013-2022-02-17)
     - [Unclassified](#unclassified-4)
-- [0.0.29 (2022-01-25)](#0029-2022-01-25)
+- [0.1.2 (2022-01-31)](#012-2022-01-31)
     - [Unclassified](#unclassified-5)
+- [0.1.1 (2022-01-31)](#011-2022-01-31)
+    - [Unclassified](#unclassified-6)
+- [0.1.0 (2022-01-31)](#010-2022-01-31)
+    - [Unclassified](#unclassified-7)
+- [0.0.38 (2022-01-28)](#0038-2022-01-28)
+    - [Unclassified](#unclassified-8)
+- [0.0.36 (2022-01-27)](#0036-2022-01-27)
+    - [Unclassified](#unclassified-9)
+- [0.0.35 (2022-01-27)](#0035-2022-01-27)
+    - [Unclassified](#unclassified-10)
+- [0.0.34 (2022-01-27)](#0034-2022-01-27)
+    - [Unclassified](#unclassified-11)
+- [0.0.33 (2022-01-26)](#0033-2022-01-26)
+    - [Unclassified](#unclassified-12)
+- [0.0.32 (2022-01-26)](#0032-2022-01-26)
+    - [Unclassified](#unclassified-13)
+- [0.0.31 (2022-01-26)](#0031-2022-01-26)
+    - [Unclassified](#unclassified-14)
+- [0.0.30 (2022-01-25)](#0030-2022-01-25)
+    - [Unclassified](#unclassified-15)
+- [0.0.29 (2022-01-25)](#0029-2022-01-25)
+    - [Unclassified](#unclassified-16)
 - [0.0.28 (2022-01-21)](#0028-2022-01-21)
     - [Bug Fixes](#bug-fixes)
     - [Chores](#chores)
 - [0.0.27 (2022-01-21)](#0027-2022-01-21)
-    - [Unclassified](#unclassified-6)
+    - [Unclassified](#unclassified-17)
 - [0.0.26 (2022-01-21)](#0026-2022-01-21)
-    - [Unclassified](#unclassified-7)
+    - [Unclassified](#unclassified-18)
 - [0.0.25 (2022-01-21)](#0025-2022-01-21)
-    - [Unclassified](#unclassified-8)
+    - [Unclassified](#unclassified-19)
 - [0.0.24 (2022-01-20)](#0024-2022-01-20)
-    - [Unclassified](#unclassified-9)
+    - [Unclassified](#unclassified-20)
 - [0.0.23 (2022-01-20)](#0023-2022-01-20)
-    - [Unclassified](#unclassified-10)
+    - [Unclassified](#unclassified-21)
 - [0.0.22 (2022-01-20)](#0022-2022-01-20)
-    - [Unclassified](#unclassified-11)
+    - [Unclassified](#unclassified-22)
 - [0.0.21 (2022-01-20)](#0021-2022-01-20)
-    - [Unclassified](#unclassified-12)
+    - [Unclassified](#unclassified-23)
 - [0.0.20 (2022-01-20)](#0020-2022-01-20)
-    - [Unclassified](#unclassified-13)
+    - [Unclassified](#unclassified-24)
 - [0.0.19 (2022-01-20)](#0019-2022-01-20)
     - [Bug Fixes](#bug-fixes-1)
     - [Features](#features)
 - [0.0.18 (2022-01-19)](#0018-2022-01-19)
-    - [Unclassified](#unclassified-14)
+    - [Unclassified](#unclassified-25)
 - [0.0.17 (2022-01-19)](#0017-2022-01-19)
-    - [Unclassified](#unclassified-15)
+    - [Unclassified](#unclassified-26)
 - [0.0.16 (2022-01-19)](#0016-2022-01-19)
     - [Features](#features-1)
 - [0.0.15 (2022-01-18)](#0015-2022-01-18)
@@ -54,34 +75,182 @@
     - [Bug Fixes](#bug-fixes-3)
     - [Chores](#chores-2)
 - [0.0.12 (2022-01-13)](#0012-2022-01-13)
-    - [Unclassified](#unclassified-16)
+    - [Unclassified](#unclassified-27)
 - [0.0.11 (2022-01-12)](#0011-2022-01-12)
-    - [Unclassified](#unclassified-17)
+    - [Unclassified](#unclassified-28)
 - [0.0.10 (2022-01-12)](#0010-2022-01-12)
     - [Chores](#chores-3)
 - [0.0.9 (2022-01-12)](#009-2022-01-12)
     - [Bug Fixes](#bug-fixes-4)
     - [Features](#features-3)
-    - [Unclassified](#unclassified-18)
+    - [Unclassified](#unclassified-29)
 - [0.0.8 (2022-01-12)](#008-2022-01-12)
-    - [Unclassified](#unclassified-19)
+    - [Unclassified](#unclassified-30)
 - [0.0.7 (2022-01-12)](#007-2022-01-12)
-    - [Unclassified](#unclassified-20)
+    - [Unclassified](#unclassified-31)
 - [0.0.6 (2022-01-12)](#006-2022-01-12)
-    - [Unclassified](#unclassified-21)
+    - [Unclassified](#unclassified-32)
 - [0.0.5 (2022-01-12)](#005-2022-01-12)
-    - [Unclassified](#unclassified-22)
+    - [Unclassified](#unclassified-33)
 - [0.0.4 (2022-01-12)](#004-2022-01-12)
-    - [Unclassified](#unclassified-23)
+    - [Unclassified](#unclassified-34)
 - [0.0.3 (2022-01-12)](#003-2022-01-12)
-    - [Unclassified](#unclassified-24)
+    - [Unclassified](#unclassified-35)
 - [0.0.1 (2022-01-12)](#001-2022-01-12)
-    - [Unclassified](#unclassified-25)
+    - [Unclassified](#unclassified-36)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# [0.0.0](https://github.com/ory/release-canary/compare/v0.0.34...v0.0.0) (2022-01-27)
+# [0.0.0](https://github.com/ory/release-canary/compare/v0.1.6...v0.0.0) (2022-02-17)
 
+
+### Unclassified
+
+* use github token ([a1f619a](https://github.com/ory/release-canary/commit/a1f619a2e23e363bf925a1e6593ff6838b28beac))
+
+
+# [0.1.6](https://github.com/ory/release-canary/compare/v0.1.5...v0.1.6) (2022-02-17)
+
+Remove git tag command
+
+
+
+
+
+### Unclassified
+
+* remove git tag ([33f67dd](https://github.com/ory/release-canary/commit/33f67dd6c24bf7d0ab59efff1ba0d469dedb1cc1))
+
+
+# [0.1.5](https://github.com/ory/release-canary/compare/v0.1.4...v0.1.5) (2022-02-17)
+
+Test changelog generation
+
+
+
+
+
+### Unclassified
+
+* use gha/changelog ([92f4a55](https://github.com/ory/release-canary/commit/92f4a55921c15991de7ff2ceb3e6b79606101fb4))
+
+
+# [0.1.4](https://github.com/ory/release-canary/compare/v0.1.3...v0.1.4) (2022-02-17)
+
+Fix jobs and another test tag.
+
+
+
+
+
+### Unclassified
+
+* fix jobs ([f78f5a8](https://github.com/ory/release-canary/commit/f78f5a85f15c228e5e11126b42639f36e068df1b))
+
+
+# [0.1.3](https://github.com/ory/release-canary/compare/v0.1.2...v0.1.3) (2022-02-17)
+
+This is a test tag.
+
+
+
+
+
+### Unclassified
+
+* test changelog ([2e6190a](https://github.com/ory/release-canary/commit/2e6190a5065498e314a3a95f0be42c4f0f25cfd2))
+
+
+# [0.1.2](https://github.com/ory/release-canary/compare/v0.1.1...v0.1.2) (2022-01-31)
+
+run on tags
+
+
+
+
+
+### Unclassified
+
+* run on tags ([49cfafc](https://github.com/ory/release-canary/commit/49cfafc8383c3ec9e557b60e3dc1b5be75bf69a5))
+* fix matrix ([36a715e](https://github.com/ory/release-canary/commit/36a715e26f8cba136447316e6b6883720e3597e4))
+
+
+# [0.1.1](https://github.com/ory/release-canary/compare/v0.1.0...v0.1.1) (2022-01-31)
+
+use separate goreleaser configs for build/release
+
+
+
+
+
+### Unclassified
+
+* use separate goreleaser configs for build/release ([28739d2](https://github.com/ory/release-canary/commit/28739d2ec061a7271ddd004f0d3ca48bb4004f6a))
+
+
+# [0.1.0](https://github.com/ory/release-canary/compare/v0.0.38...v0.1.0) (2022-01-31)
+
+fix indent
+
+
+
+
+
+### Unclassified
+
+* fix indent ([ffc8c1f](https://github.com/ory/release-canary/commit/ffc8c1fc18f792b819b82fbd56bb202904624cfa))
+* release with cache ([55c10fa](https://github.com/ory/release-canary/commit/55c10fafaa6e5f62b413468acc6c6e8544be4bd5))
+* setup step output ([6fac569](https://github.com/ory/release-canary/commit/6fac569eed91c5b9ae15c934c375e60d5666d2cf))
+* print stringified json ([45ef6e6](https://github.com/ory/release-canary/commit/45ef6e667df788cbc54c26edb090a9dbb7a88c8a))
+* yq syntax latest version ([c4d1454](https://github.com/ory/release-canary/commit/c4d145436835d064d6223df16771149fa9c47ca4))
+* fix yq syntax ([289b96b](https://github.com/ory/release-canary/commit/289b96bfec90a8c275936d583df94d7c0bd76cf1))
+* checkout before yq ([f6c59c8](https://github.com/ory/release-canary/commit/f6c59c81d29315f8535b69966537ca42f313a6a3))
+* try parallel goreleaser builds ([12321d0](https://github.com/ory/release-canary/commit/12321d0cc98e9bf092e2fe4d9af634143f3c3fe0))
+
+
+# [0.0.38](https://github.com/ory/release-canary/compare/v0.0.37...v0.0.38) (2022-01-28)
+
+test parallel release
+
+
+
+
+
+### Unclassified
+
+* test parallel release ([a172b7f](https://github.com/ory/release-canary/commit/a172b7f640b06f6ea35af4890032e7e85f2f6df1))
+* no slack notif ([9cfbc63](https://github.com/ory/release-canary/commit/9cfbc63187a3a2f9027b55480e51d2abc2794dba))
+* run e2e ([8a9db9c](https://github.com/ory/release-canary/commit/8a9db9c25e26a1a48d535304c5da1c3b07f4e9b4))
+* test slack notify action ([fd05023](https://github.com/ory/release-canary/commit/fd05023eed986ba0c9eb05ed180243eb41efbdb8))
+* test caching hydra build ([b0c7c1c](https://github.com/ory/release-canary/commit/b0c7c1c814890e3e0a0ed255cc5b9d598e64decc))
+* run e2e on master ([e0034b7](https://github.com/ory/release-canary/commit/e0034b7e87cea652a0f5b969f0ac6caba3898b86))
+* test e2e matrix ([3e18162](https://github.com/ory/release-canary/commit/3e181625c7be9d644ac406569952f48974decf39))
+
+
+# [0.0.36](https://github.com/ory/release-canary/compare/v0.0.35...v0.0.36) (2022-01-27)
+
+test render-version-schema again
+
+
+
+
+
+### Unclassified
+
+* test render-version-schema again ([a634a5c](https://github.com/ory/release-canary/commit/a634a5c2dcc66e783879c643ec0ed2fdc31e7be4))
+
+
+# [0.0.35](https://github.com/ory/release-canary/compare/v0.0.34...v0.0.35) (2022-01-27)
+
+ok passing workflows
+
+
+
+
+
+### Unclassified
+
+* ok passing workflows ([9de109e](https://github.com/ory/release-canary/commit/9de109edd3f014df6ea930902c16731763c3cbf9))
 
 
 # [0.0.34](https://github.com/ory/release-canary/compare/v0.0.33...v0.0.34) (2022-01-27)
